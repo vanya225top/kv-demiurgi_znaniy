@@ -1,330 +1,355 @@
-// ПОЛНЫЙ JS ДЛЯ САЙТА
-
+// Основной JavaScript файл
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Сайт "Новое сельское хозяйство как социальная норма" загружен');
-    
-    // ИНИЦИАЛИЗАЦИЯ
-    initSite();
-    
-    // АНИМАЦИИ И ИНТЕРАКТИВ
-    initAnimations();
-    initInteractions();
-    initCharts();
-    
-    // ОБРАБОТЧИКИ СОБЫТИЙ
-    initEventListeners();
+    console.log('Основной JS загружен');
+
+    // Инициализация после загрузки страницы
+    setTimeout(initializePage, 100);
 });
 
-// ОСНОВНАЯ ИНИЦИАЛИЗАЦИЯ
-function initSite() {
-    // Скрываем загрузчик через 1.5 секунды (гарантированно)
-    setTimeout(() => {
-        const loader = document.getElementById('page-loader');
-        if (loader) {
-            loader.style.opacity = '0';
-            loader.style.visibility = 'hidden';
-        }
-        
-        // Показываем контент с анимацией
-        document.querySelectorAll('.critical-hidden').forEach(el => {
-            el.classList.add('critical-visible');
-        });
-        
-        // Запускаем счетчики
-        startCounters();
-        
-        console.log('Сайт инициализирован');
-    }, 1500);
+function initializePage() {
+    // Анимация счетчиков
+    initCounters();
+    
+    // Анимация графиков
+    initCharts();
+    
+    // Интерактивные элементы
+    initInteractiveElements();
+    
+    // Модальные окна
+    initModals();
+    
+    // Формы
+    initForms();
+    
+    // Дополнительные анимации
+    initAnimations();
 }
 
-// АНИМАЦИИ
-function initAnimations() {
-    // Анимация появления при скролле
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
+// Анимация счетчиков
+function initCounters() {
+    const counters = document.querySelectorAll('[data-count], [data-target]');
     
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('animate-in');
+                const element = entry.target;
                 
-                // Анимация прогресс-баров
-                if (entry.target.classList.contains('progress')) {
-                    const value = entry.target.dataset.value;
-                    const bar = entry.target.querySelector('.progress-bar');
+                if (element.classList.contains('stat-value')) {
+                    const target = parseInt(element.getAttribute('data-count')) || 100;
+                    animateCounter(element, target);
+                } else if (element.classList.contains('metric-value')) {
+                    const target = parseInt(element.getAttribute('data-target')) || 100;
+                    animateCounter(element, target);
+                } else if (element.classList.contains('chart-item')) {
+                    const percent = element.getAttribute('data-percent');
+                    const bar = element.querySelector('.chart-bar');
                     if (bar) {
-                        bar.style.width = value + '%';
+                        setTimeout(() => {
+                            bar.style.height = percent + '%';
+                        }, 300);
                     }
                 }
                 
-                // Анимация столбцов графика
-                if (entry.target.classList.contains('chart-bar')) {
-                    const value = entry.target.dataset.value;
-                    entry.target.style.height = value + '%';
-                    entry.target.style.setProperty('--height', value + '%');
-                }
+                observer.unobserve(element);
             }
         });
-    }, observerOptions);
-    
-    // Наблюдаем за всеми элементами с анимацией
-    document.querySelectorAll('.audience-card, .channel, .process-step, .swot-card, .canvas-cell, .metric, .contribution, .link-card').forEach(el => {
-        observer.observe(el);
+    }, {
+        threshold: 0.5,
+        rootMargin: '0px 0px -100px 0px'
     });
     
-    // CSS для анимации появления
-    const animationStyles = document.createElement('style');
-    animationStyles.textContent = `
-        .animate-in {
-            animation: fadeInUp 0.6s ease-out forwards;
-        }
-        
-        .audience-card,
-        .channel,
-        .process-step,
-        .swot-card,
-        .canvas-cell,
-        .metric,
-        .contribution,
-        .link-card {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-    `;
-    document.head.appendChild(animationStyles);
+    counters.forEach(counter => {
+        observer.observe(counter);
+    });
+    
+    // Также наблюдаем за графиками
+    document.querySelectorAll('.chart-item').forEach(item => {
+        observer.observe(item);
+    });
 }
 
-// ИНТЕРАКТИВНЫЕ ЭЛЕМЕНТЫ
-function initInteractions() {
-    // Мобильное меню
-    const menuToggle = document.querySelector('.menu-toggle');
-    const navMenu = document.querySelector('.nav-menu');
+function animateCounter(element, target) {
+    let current = 0;
+    const increment = target / 100;
+    const duration = 2000;
+    const stepTime = duration / 100;
     
-    if (menuToggle && navMenu) {
-        menuToggle.addEventListener('click', () => {
-            menuToggle.classList.toggle('active');
-            navMenu.classList.toggle('active');
-        });
-        
-        // Закрытие меню при клике на ссылку
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                menuToggle.classList.remove('active');
-                navMenu.classList.remove('active');
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            element.textContent = target;
+            clearInterval(timer);
+        } else {
+            element.textContent = Math.floor(current);
+        }
+    }, stepTime);
+}
+
+// Анимация графиков
+function initCharts() {
+    // Инициализация графиков прогресса
+    const progressElements = document.querySelectorAll('.progress-bar, .chart-bar');
+    
+    progressElements.forEach(bar => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const width = bar.style.width || bar.getAttribute('data-percent') + '%';
+                    bar.style.width = '0';
+                    bar.style.height = '0';
+                    
+                    setTimeout(() => {
+                        if (bar.style.width !== undefined) {
+                            bar.style.width = width;
+                        }
+                        if (bar.style.height !== undefined) {
+                            bar.style.height = width;
+                        }
+                    }, 300);
+                    
+                    observer.unobserve(bar);
+                }
             });
-        });
-    }
-    
-    // Кнопка "Наверх"
-    const backToTop = document.getElementById('backToTop');
-    if (backToTop) {
-        backToTop.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, {
+            threshold: 0.5
         });
         
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                backToTop.style.opacity = '1';
-                backToTop.style.visibility = 'visible';
-            } else {
-                backToTop.style.opacity = '0';
-                backToTop.style.visibility = 'hidden';
-            }
-        });
-    }
+        observer.observe(bar);
+    });
+}
+
+// Интерактивные элементы
+function initInteractiveElements() {
+    // Интерактивные узлы в визуализации
+    const vizNodes = document.querySelectorAll('.viz-node');
     
-    // Интерактивные карточки
-    document.querySelectorAll('.card-interactive').forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-10px)';
-            this.style.boxShadow = '0 20px 40px rgba(126, 87, 194, 0.3)';
+    vizNodes.forEach(node => {
+        node.addEventListener('click', function() {
+            const step = this.getAttribute('data-step');
+            showStepInfo(step);
         });
         
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
+        node.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.1)';
+            this.style.boxShadow = 'var(--shadow-lg)';
+        });
+        
+        node.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
             this.style.boxShadow = 'var(--shadow)';
         });
     });
     
-    // Интерактивные элементы KV/RaMIS
-    document.querySelectorAll('.link-card').forEach(card => {
-        card.addEventListener('click', function(e) {
-            if (this.href) {
-                e.preventDefault();
-                setTimeout(() => {
-                    window.open(this.href, '_blank');
-                }, 300);
-                
-                // Эффект клика
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = '';
-                }, 300);
-            }
+    // Интерактивные карточки
+    const interactiveCards = document.querySelectorAll('.problem-card, .step, .swot-card, .pest-card, .metric-card');
+    
+    interactiveCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.zIndex = '10';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.zIndex = '1';
         });
     });
-}
-
-// ГРАФИКИ И СЧЕТЧИКИ
-function initCharts() {
-    // Анимация столбцов графика
-    setTimeout(() => {
-        document.querySelectorAll('.chart-bar').forEach(bar => {
-            const value = bar.dataset.value;
-            bar.style.height = value + '%';
-            bar.style.setProperty('--height', value + '%');
-        });
-    }, 2000);
     
-    // Интерактивность столбцов
-    document.querySelectorAll('.chart-bar').forEach(bar => {
-        bar.addEventListener('mouseenter', function() {
-            const value = this.dataset.value;
-            const label = this.dataset.label;
+    // Эффект параллакса для KV/RaMIS секции
+    const kvramisSection = document.querySelector('.kvramis-section');
+    
+    if (kvramisSection) {
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
             
-            // Создаем подсказку
-            const tooltip = document.createElement('div');
-            tooltip.className = 'chart-tooltip';
-            tooltip.textContent = `${label}: ${value}%`;
-            tooltip.style.position = 'absolute';
-            tooltip.style.top = '-40px';
-            tooltip.style.left = '50%';
-            tooltip.style.transform = 'translateX(-50%)';
-            tooltip.style.background = 'var(--secondary)';
-            tooltip.style.color = 'white';
-            tooltip.style.padding = '8px 12px';
-            tooltip.style.borderRadius = '6px';
-            tooltip.style.fontSize = '0.9rem';
-            tooltip.style.whiteSpace = 'nowrap';
-            tooltip.style.zIndex = '100';
-            
-            this.appendChild(tooltip);
+            kvramisSection.style.backgroundPosition = `calc(50% + ${x}px) calc(50% + ${y}px)`;
         });
-        
-        bar.addEventListener('mouseleave', function() {
-            const tooltip = this.querySelector('.chart-tooltip');
-            if (tooltip) tooltip.remove();
-        });
-    });
-}
-
-// СЧЕТЧИКИ
-function startCounters() {
-    document.querySelectorAll('.stat-value[data-count], .metric-value[data-target]').forEach(counter => {
-        const target = parseInt(counter.dataset.count || counter.dataset.target || 0);
-        const duration = 2000;
-        const step = target / (duration / 16);
-        let current = 0;
-        
-        const updateCounter = () => {
-            current += step;
-            if (current >= target) {
-                counter.textContent = target;
-            } else {
-                counter.textContent = Math.floor(current);
-                requestAnimationFrame(updateCounter);
-            }
-        };
-        
-        // Запускаем с задержкой
-        setTimeout(() => {
-            requestAnimationFrame(updateCounter);
-        }, 500);
-    });
-}
-
-// ОБРАБОТЧИКИ СОБЫТИЙ
-function initEventListeners() {
-    // Плавная прокрутка
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            const href = this.getAttribute('href');
-            if (href === '#') return;
-            
-            e.preventDefault();
-            const target = document.querySelector(href);
-            if (target) {
-                const headerOffset = 80;
-                const elementPosition = target.offsetTop;
-                const offsetPosition = elementPosition - headerOffset;
-                
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-    
-    // Анимация навигации при скролле
-    let lastScroll = 0;
-    window.addEventListener('scroll', () => {
-        const navbar = document.querySelector('.navbar');
-        const currentScroll = window.pageYOffset;
-        
-        if (currentScroll <= 0) {
-            navbar.style.boxShadow = 'none';
-            navbar.style.transform = 'translateY(0)';
-            return;
-        }
-        
-        if (currentScroll > lastScroll && currentScroll > 100) {
-            // Прокрутка вниз
-            navbar.style.transform = 'translateY(-100%)';
-        } else {
-            // Прокрутка вверх
-            navbar.style.transform = 'translateY(0)';
-            navbar.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
-        }
-        
-        lastScroll = currentScroll;
-    });
-    
-    // Копирование контактов
-    document.querySelectorAll('.contact-item').forEach(item => {
-        item.addEventListener('click', function() {
-            const text = this.textContent.trim();
-            copyToClipboard(text);
-            showNotification('Контакт скопирован в буфер обмена');
-        });
-    });
-    
-    // Ресайз окна
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            // Обновляем графики при изменении размера
-            document.querySelectorAll('.chart-bar').forEach(bar => {
-                const value = bar.dataset.value;
-                bar.style.height = value + '%';
-            });
-        }, 250);
-    });
-}
-
-// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
-function copyToClipboard(text) {
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text);
-    } else {
-        // Fallback для старых браузеров
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
     }
 }
 
+function showStepInfo(step) {
+    const messages = {
+        awareness: 'Первый этап — осознание проблемы цивилизационного разрыва',
+        immersion: 'Второй этап — погружение в тему через доступный контент',
+        application: 'Третий этап — применение знаний на практике',
+        norm: 'Четвертый этап — агрограмотность становится социальной нормой'
+    };
+    
+    showNotification(messages[step] || 'Этап процесса обучения');
+}
+
+// Модальные окна
+function initModals() {
+    const videoBtn = document.getElementById('watchVideo');
+    const videoModal = document.getElementById('videoModal');
+    const modalClose = videoModal?.querySelector('.modal-close');
+    
+    if (videoBtn && videoModal) {
+        videoBtn.addEventListener('click', () => {
+            videoModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        modalClose.addEventListener('click', () => {
+            videoModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+        
+        videoModal.addEventListener('click', (e) => {
+            if (e.target === videoModal) {
+                videoModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Эскейп для закрытия
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && videoModal.classList.contains('active')) {
+                videoModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+    }
+    
+    // Воспроизведение видео (заглушка)
+    const videoPlaceholder = document.querySelector('.video-placeholder');
+    if (videoPlaceholder) {
+        videoPlaceholder.addEventListener('click', () => {
+            showNotification('Видео будет доступно после презентации проекта');
+        });
+    }
+}
+
+// Формы
+function initForms() {
+    const contactForm = document.getElementById('contactForm');
+    
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Простая валидация
+            const inputs = this.querySelectorAll('input, textarea');
+            let isValid = true;
+            
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.style.borderColor = '#f44336';
+                } else {
+                    input.style.borderColor = '';
+                }
+            });
+            
+            if (isValid) {
+                // Имитация отправки
+                showNotification('Сообщение отправлено! Мы свяжемся с вами в ближайшее время.');
+                this.reset();
+                
+                // Анимация успешной отправки
+                const submitBtn = this.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-check"></i> Отправлено';
+                    submitBtn.disabled = true;
+                    
+                    setTimeout(() => {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }, 3000);
+                }
+            } else {
+                showNotification('Пожалуйста, заполните все поля');
+            }
+        });
+    }
+}
+
+// Дополнительные анимации
+function initAnimations() {
+    // Анимация появления элементов при скролле
+    const animatedElements = document.querySelectorAll('.problem-card, .step, .swot-card, .pest-card, .canvas-cell, .contribution-item, .link-card');
+    
+    const scrollObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.classList.add('animated');
+                }, index * 100);
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+    
+    animatedElements.forEach(el => {
+        scrollObserver.observe(el);
+    });
+    
+    // Добавляем CSS для анимации
+    const animationStyle = document.createElement('style');
+    animationStyle.textContent = `
+        .animated {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .problem-card,
+        .step,
+        .swot-card,
+        .pest-card,
+        .canvas-cell,
+        .contribution-item,
+        .link-card {
+            opacity: 0;
+        }
+    `;
+    document.head.appendChild(animationStyle);
+    
+    // Анимация иконок при наведении
+    const icons = document.querySelectorAll('.problem-icon, .contribution-icon, .link-icon');
+    
+    icons.forEach(icon => {
+        icon.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.1) rotate(5deg)';
+        });
+        
+        icon.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1) rotate(0deg)';
+        });
+    });
+    
+    // Эффект пульсации для CTA кнопок
+    const ctaButtons = document.querySelectorAll('.btn-primary');
+    
+    ctaButtons.forEach(btn => {
+        setInterval(() => {
+            btn.style.boxShadow = '0 0 0 0 rgba(46, 125, 50, 0.7)';
+            setTimeout(() => {
+                btn.style.boxShadow = '0 0 0 10px rgba(46, 125, 50, 0)';
+            }, 600);
+        }, 3000);
+    });
+}
+
+// Вспомогательные функции
 function showNotification(message) {
     // Удаляем старые уведомления
-    document.querySelectorAll('.notification').forEach(n => n.remove());
+    const oldNotification = document.querySelector('.notification');
+    if (oldNotification) {
+        oldNotification.remove();
+    }
     
     const notification = document.createElement('div');
     notification.className = 'notification';
@@ -333,28 +358,31 @@ function showNotification(message) {
         position: fixed;
         bottom: 20px;
         right: 20px;
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        background: var(--primary);
         color: white;
         padding: 15px 25px;
-        border-radius: 10px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-lg);
         z-index: 10000;
-        animation: slideInRight 0.3s ease-out;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        font-weight: 500;
+        animation: slideInRight 0.3s ease;
+        max-width: 400px;
+        word-wrap: break-word;
     `;
     
     document.body.appendChild(notification);
     
     setTimeout(() => {
-        notification.style.animation = 'slideOutRight 0.3s ease-out forwards';
-        setTimeout(() => notification.remove(), 300);
+        notification.style.animation = 'slideOutRight 0.3s ease forwards';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
     }, 3000);
     
-    // Добавляем стили для анимации
+    // Добавляем CSS для анимации
     if (!document.querySelector('#notification-styles')) {
-        const styles = document.createElement('style');
-        styles.id = 'notification-styles';
-        styles.textContent = `
+        const style = document.createElement('style');
+        style.id = 'notification-styles';
+        style.textContent = `
             @keyframes slideInRight {
                 from {
                     transform: translateX(100%);
@@ -377,45 +405,58 @@ function showNotification(message) {
                 }
             }
         `;
-        document.head.appendChild(styles);
+        document.head.appendChild(style);
     }
 }
 
-// ЗАПУСК САЙТА ПРИ ПОЛНОЙ ЗАГРУЗКЕ
-window.addEventListener('load', function() {
-    console.log('Все ресурсы загружены');
+// Обработка ошибок
+window.addEventListener('error', function(e) {
+    console.error('Ошибка:', e.message);
     
-    // Проверяем готовность
-    const isReady = document.readyState === 'complete';
-    if (isReady) {
-        document.body.classList.add('loaded');
-    }
-    
-    // Проверяем производительность
-    const perfEntries = performance.getEntriesByType('navigation');
-    if (perfEntries.length > 0) {
-        const navTiming = perfEntries[0];
-        console.log(`Время загрузки: ${navTiming.loadEventEnd - navTiming.loadEventStart}ms`);
+    // Показываем пользователю дружелюбное сообщение
+    if (e.message.includes('Script error')) {
+        showNotification('Произошла ошибка при загрузке скрипта. Пожалуйста, обновите страницу.');
     }
 });
 
-// РЕЗЕРВНЫЕ МЕХАНИЗМЫ
-// Если IntersectionObserver не поддерживается
-if (!('IntersectionObserver' in window)) {
-    console.log('IntersectionObserver не поддерживается, используем fallback');
+// Отслеживание производительности
+window.addEventListener('load', function() {
+    const timing = performance.timing;
+    const loadTime = timing.loadEventEnd - timing.navigationStart;
     
-    document.querySelectorAll('.audience-card, .channel, .process-step, .swot-card, .canvas-cell, .metric, .contribution, .link-card').forEach(el => {
-        el.style.opacity = '1';
-        el.style.transform = 'none';
-    });
-}
+    console.log(`Время загрузки страницы: ${loadTime}ms`);
+    
+    if (loadTime > 3000) {
+        console.warn('Время загрузки превышает 3 секунды. Рекомендуется оптимизация.');
+    }
+});
 
-// Резервная анимация счетчиков
-setTimeout(() => {
-    document.querySelectorAll('.stat-value[data-count], .metric-value[data-target]').forEach(counter => {
-        if (counter.textContent === '0') {
-            const target = parseInt(counter.dataset.count || counter.dataset.target || 100);
-            counter.textContent = target;
-        }
+// Резервные функции для старых браузеров
+if (!window.IntersectionObserver) {
+    console.warn('IntersectionObserver не поддерживается. Используем резервные анимации.');
+    
+    // Простая анимация появления при скролле
+    window.addEventListener('scroll', function() {
+        const elements = document.querySelectorAll('.problem-card, .step, .swot-card');
+        const windowHeight = window.innerHeight;
+        
+        elements.forEach((el, index) => {
+            const position = el.getBoundingClientRect().top;
+            
+            if (position < windowHeight - 100) {
+                setTimeout(() => {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 100);
+            }
+        });
     });
-}, 4000);
+    
+    // Инициализация счетчиков без IntersectionObserver
+    setTimeout(() => {
+        document.querySelectorAll('.stat-value').forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-count')) || 100;
+            animateCounter(counter, target);
+        });
+    }, 1000);
+}
