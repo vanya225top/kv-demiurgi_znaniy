@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новое сельское хозяйство как социальная норма | Подерин Иван Романович, ОмГАУ</title>
+    
+    <!-- КРИТИЧНЫЕ СТИЛИ В ШАПКЕ -->
+    <style>
+        /* КРИТИЧНАЯ СЕКЦИЯ: Должна загрузиться мгновенно */
+        :root {
+            --primary: #2E7D32;
+            --primary-dark: #1B5E20;
+            --primary-light: #4CAF50;
+            --secondary: #7E57C2;
+            --secondary-dark: #5E35B1;
+            --secondary-light: #B39DDB;
+            --accent: #FF9800;
+            --dark: #121212;
+            --darker: #0A0A0A;
+            --gray: #1E1E1E;
+            --light: #FFFFFF;
+            --text: #E0E0E0;
+            --text-light: #B0B0B0;
+            --shadow: 0 4px 20px rgba(0,0,0,0.3);
+            --gradient: linear-gradient(135deg, var(--secondary-dark) 0%, var(--dark) 100%);
+        }
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        html { 
+            scroll-behavior: smooth; 
+            font-size: 16px; 
+        }
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: var(--dark); 
+            color: var(--text); 
+            line-height: 1.6; 
+            overflow-x: hidden; 
+        }
+        
+        /* Критичные элементы, которые должны быть видимы сразу */
+        .critical-hidden { 
+            opacity: 0; 
+            transform: translateY(20px); 
+            transition: opacity 0.6s ease, transform 0.6s ease; 
+        }
+        
+        .critical-visible { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
+        
+        /* Навигация всегда видима */
+        .navbar { 
+            position: fixed; 
+            top: 0; 
+            width: 100%; 
+            background: rgba(18, 18, 18, 0.95); 
+            backdrop-filter: blur(10px); 
+            z-index: 1000; 
+            padding: 1rem 0; 
+            border-bottom: 1px solid rgba(126, 87, 194, 0.3); 
+        }
+        
+        .nav-container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 0 2rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        
+        .nav-logo { 
+            display: flex; 
+            align-items: center; 
+            gap: 0.5rem; 
+            font-weight: 700; 
+            color: var(--primary-light); 
+            text-decoration: none; 
+        }
+        
+        .nav-menu { 
+            display: flex; 
+            list-style: none; 
+            gap: 2rem; 
+        }
+        
+        .nav-link { 
+            color: var(--text); 
+            text-decoration: none; 
+            padding: 0.5rem 1rem; 
+            border-radius: 4px; 
+            transition: all 0.3s ease; 
+            position: relative; 
+        }
+        
+        .nav-link::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: 0; 
+            left: 50%; 
+            width: 0; 
+            height: 2px; 
+            background: var(--primary); 
+            transition: all 0.3s ease; 
+        }
+        
+        .nav-link:hover::after { 
+            width: 100%; 
+            left: 0; 
+        }
+        
+        /* Герой секция */
+        .hero { 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            padding: 6rem 2rem 2rem; 
+            position: relative; 
+            overflow: hidden; 
+        }
+        
+        .hero::before { 
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background: radial-gradient(circle at 20% 50%, rgba(94, 53, 177, 0.1) 0%, transparent 50%), 
+                        radial-gradient(circle at 80% 20%, rgba(46, 125, 50, 0.1) 0%, transparent 50%); 
+            z-index: -1; 
+        }
+        
+        .hero-content { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            width: 100%; 
+        }
+        
+        .hero-title { 
+            font-size: 3.5rem; 
+            line-height: 1.2; 
+            margin-bottom: 1.5rem; 
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            background-clip: text; 
+        }
+        
+        /* Загрузчик */
+        #page-loader { 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: var(--darker); 
+            z-index: 9999; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        .loader-content { 
+            text-align: center; 
+        }
+        
+        .loader-spinner { 
+            width: 50px; 
+            height: 50px; 
+            border: 3px solid rgba(126, 87, 194, 0.3); 
+            border-top-color: var(--secondary); 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+            margin-bottom: 1rem; 
+        }
+        
+        @keyframes spin { 
+            to { transform: rotate(360deg); } 
+        }
+    </style>
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌱</text></svg>">
+</head>
+<body>
+    <!-- ЗАГРУЗЧИК -->
+    <div id="page-loader">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <div>Инициализация проекта...</div>
+        </div>
+    </div>
+
+    <!-- НАВИГАЦИЯ -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#home" class="nav-logo">
+                <span class="logo-icon">🌱</span>
+                <span class="logo-text">Демиурги общества и знания</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">Главная</a></li>
+                <li><a href="#problem" class="nav-link">Проблема</a></li>
+                <li><a href="#solution" class="nav-link">Решение</a></li>
+                <li><a href="#analysis" class="nav-link">Анализ</a></li>
+                <li><a href="#model" class="nav-link">Модель</a></li>
+                <li><a href="#kvramis" class="nav-link">Благодарности</a></li>
+            </ul>
+            <button class="menu-toggle" aria-label="Меню">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ГЛАВНАЯ СЕКЦИЯ -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="project-badges">
+                <span class="badge">Проектная деятельность</span>
+                <span class="badge">ОмГАУ</span>
+                <span class="badge">АТФ Б-41-АСГ</span>
+            </div>
+            
+            <h1 class="hero-title critical-hidden">
+                <span class="title-line">Новое сельское хозяйство</span>
+                <span class="title-line">как социальная норма</span>
+            </h1>
+            
+            <p class="hero-subtitle critical-hidden">
+                Проект экосистемы интуитивного агропросвещения для преодоления цивилизационного разрыва между человеком и АПК
+            </p>
+            
+            <div class="project-leader critical-hidden">
+                <div class="leader-avatar">ИП</div>
+                <div class="leader-info">
+                    <div class="leader-role">Руководитель проекта</div>
+                    <div class="leader-name">Подерин Иван Романович</div>
+                    <div class="leader-details">Студент АТФ, группа Б-41-АСГ, Омский государственный аграрный университет</div>
+                </div>
+            </div>
+            
+            <div class="hero-stats critical-hidden">
+                <div class="stat">
+                    <div class="stat-value" data-count="2-4">0</div>
+                    <div class="stat-label">тысю аудитория</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" data-count="500+">0</div>
+                    <div class="stat-label">дней работы</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" data-count="99.9">0</div>
+                    <div class="stat-label">% эффективности</div>
+                </div>
+            </div>
+            
+            <div class="hero-actions critical-hidden">
+                <a href="#problem" class="btn btn-primary">Изучить проект</a>
+                <a href="#contact" class="btn btn-secondary">Связаться</a>
+            </div>
+        </div>
+        
+        <!-- Анимированная визуализация -->
+        <div class="hero-visual">
+            <div class="agro-circle">
+                <svg viewBox="0 0 200 200" class="circle-svg">
+                    <circle class="circle-bg" cx="100" cy="100" r="90"/>
+                    <circle class="circle-progress" cx="100" cy="100" r="90" stroke-dasharray="565" stroke-dashoffset="565"/>
+                    <text class="circle-text" x="100" y="100" text-anchor="middle">АПК</text>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- ПРОБЛЕМА -->
+    <section id="problem" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Цивилизационный разрыв</h2>
+                <div class="section-divider"></div>
+            </div>
+            
+            <div class="problem-content">
+                <div class="problem-card">
+                    <h3>Массовая безграмотность населения по вопросам продовольственной безопасности</h3>
+                    <p>Разрыв между человеком и агропромышленным комплексом создает системные риски для национальной безопасности и устойчивого развития.</p>
+                </div>
+                
+                <div class="target-audience">
+                    <h3>Целевая аудитория</h3>
+                    <div class="audience-grid">
+                        <div class="audience-card">
+                            <div class="audience-icon">🎓</div>
+                            <h4>Студенты</h4>
+                            <p>Будущие специалисты АПК</p>
+                            <div class="progress" data-value="65">
+                                <div class="progress-bar"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="audience-card">
+                            <div class="audience-icon">👨‍🎓</div>
+                            <h4>Школьники</h4>
+                            <p>Потенциальный кадровый резерв</p>
+                            <div class="progress" data-value="80">
+                                <div class="progress-bar"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="audience-card">
+                            <div class="audience-icon">🏙️</div>
+                            <h4>Горожане</h4>
+                            <p>Потребители, нуждающиеся в просвещении</p>
+                            <div class="progress" data-value="45">
+                                <div class="progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- РЕШЕНИЕ -->
+    <section id="solution" class="section dark">
+        <div class="container">
+            <div class="section-header">
+                <h2>Экосистема интуитивного агропросвещения</h2>
+                <div class="section-divider"></div>
+            </div>
+            
+            <div class="solution-content">
+                <div class="solution-concept">
+                    <p>Вместо традиционного обучения — "калибровка" сознания, делая агрограмотность естественной частью жизни через современные каналы коммуникации.</p>
+                </div>
+                
+                <div class="solution-channels">
+                    <div class="channel">
+                        <div class="channel-icon">📱</div>
+                        <div class="channel-content">
+                            <h3>Социальные сети</h3>
+                            <p>Telegram, Дзен для распространения доступного контента</p>
+                        </div>
+                    </div>
+                    
+                    <div class="channel">
+                        <div class="channel-icon">🎬</div>
+                        <div class="channel-content">
+                            <h3>Поп-культура</h3>
+                            <p>Интеграция агротематики в популярный контент</p>
+                        </div>
+                    </div>
+                    
+                    <div class="channel">
+                        <div class="channel-icon">🏛️</div>
+                        <div class="channel-content">
+                            <h3>Вузы</h3>
+                            <p>Центры верификации и экспертной поддержки</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="solution-process">
+                    <div class="process-step" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Осознание</h4>
+                            <p>Понимание важности агрограмотности</p>
+                        </div>
+                    </div>
+                    
+                    <div class="process-step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Погружение</h4>
+                            <p>Интуитивное знакомство с тематикой</p>
+                        </div>
+                    </div>
+                    
+                    <div class="process-step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Применение</h4>
+                            <p>Использование знаний в повседневной жизни</p>
+                        </div>
+                    </div>
+                    
+                    <div class="process-step" data-step="4">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Норма</h4>
+                            <p>Агрограмотность становится социальной нормой</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- АНАЛИЗ -->
+    <section id="analysis" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Анализ рынка и потенциала</h2>
+                <div class="section-divider"></div>
+            </div>
+            
+            <div class="analysis-content">
+                <div class="market-stats">
+                    <div class="market-card">
+                        <div class="market-value">20 млн</div>
+                        <div class="market-label">Потенциальная аудитория в РФ</div>
+                    </div>
+                    
+                    <div class="market-card">
+                        <div class="market-value">1-2 млн</div>
+                        <div class="market-label">Целевой сегмент (молодежь)</div>
+                    </div>
+                    
+                    <div class="market-card">
+                        <div class="market-value">+100%</div>
+                        <div class="market-label">Рост интереса к теме</div>
+                    </div>
+                </div>
+                
+                <div class="swot-analysis">
+                    <h3>SWOT-анализ</h3>
+                    <div class="swot-grid">
+                        <div class="swot-card strength">
+                            <h4>Сильные стороны</h4>
+                            <ul>
+                                <li>Инновационная методология</li>
+                                <li>Низкий порог входа</li>
+                                <li>Поддержка ОмГАУ</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="swot-card weakness">
+                            <h4>Слабые стороны</h4>
+                            <ul>
+                                <li>Ограниченные ресурсы</li>
+                                <li>Волонтерский контент</li>
+                                <li>Сопротивление системы</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="swot-card opportunity">
+                            <h4>Возможности</h4>
+                            <ul>
+                                <li>Господдержка АПК</li>
+                                <li>Растущий интерес</li>
+                                <li>Партнерства</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="swot-card threat">
+                            <h4>Угрозы</h4>
+                            <ul>
+                                <li>Конкуренция за внимание</li>
+                                <li>Консерватизм</li>
+                                <li>Недостаток финансирования</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="interactive-chart">
+                    <h3>Динамика роста агрограмотности</h3>
+                    <div class="chart-container">
+                        <div class="chart-axis"></div>
+                        <div class="chart-bars">
+                            <div class="chart-bar" data-value="45" data-label="Студенты"></div>
+                            <div class="chart-bar" data-value="30" data-label="Школьники"></div>
+                            <div class="chart-bar" data-value="25" data-label="Горожане"></div>
+                            <div class="chart-bar" data-value="85" data-label="Фермеры"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- БИЗНЕС-МОДЕЛЬ -->
+    <section id="model" class="section dark">
+        <div class="container">
+            <div class="section-header">
+                <h2>Business Model Canvas</h2>
+                <div class="section-divider"></div>
+            </div>
+            
+            <div class="model-content">
+                <div class="canvas-grid">
+                    <div class="canvas-cell" data-cell="partners">
+                        <h4>Ключевые партнеры</h4>
+                        <ul>
+                            <li>ОмГАУ</li>
+                            <li>Агрохолдинги</li>
+                            <li>EdTech-платформы</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="canvas-cell" data-cell="activities">
+                        <h4>Ключевые активности</h4>
+                        <ul>
+                            <li>Обучение</li>
+                            <li>Контент-производство</li>
+                            <li>Полевые практики</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="canvas-cell main" data-cell="value">
+                        <h4>Ценностное предложение</h4>
+                        <p>Интуитивное агропросвещение как новая социальная норма</p>
+                    </div>
+                    
+                    <div class="canvas-cell" data-cell="relationships">
+                        <h4>Взаимоотношения</h4>
+                        <ul>
+                            <li>Менторство</li>
+                            <li>Поддержка сообщества</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="canvas-cell" data-cell="channels">
+                        <h4>Каналы</h4>
+                        <ul>
+                            <li>Онлайн-платформа</li>
+                            <li>Социальные сети</li>
+                            <li>Семинары</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="canvas-cell" data-cell="customers">
+                        <h4>Сегменты клиентов</h4>
+                        <ul>
+                            <li>Студенты</li>
+                            <li>Школьники</li>
+                            <li>Горожане</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="canvas-cell" data-cell="costs">
+                        <h4>Структура затрат</h4>
+                        <ul>
+                            <li>Оборудование</li>
+                            <li>Зарплаты</li>
+                            <li>Маркетинг</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="canvas-cell" data-cell="revenue">
+                        <h4>Потоки доходов</h4>
+                        <ul>
+                            <li>Гранты</li>
+                            <li>Спонсорство</li>
+                            <li>Платные курсы</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="metrics">
+                    <h3>Ключевые метрики</h3>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <div class="metric-value" data-target="10000">0</div>
+                            <div class="metric-label">Охват за первый год</div>
+                        </div>
+                        
+                        <div class="metric">
+                            <div class="metric-value" data-target="15">0</div>
+                            <div class="metric-label">Конверсия в обучение</div>
+                        </div>
+                        
+                        <div class="metric">
+                            <div class="metric-value" data-target="30">0</div>
+                            <div class="metric-label">NPS (удовлетворенность)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- БЛАГОДАРНОСТИ KV/RaMIS -->
+    <section id="kvramis" class="section special">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="shine">Особая благодарность</h2>
+                <div class="section-divider"></div>
+            </div>
+            
+            <div class="kvramis-showcase">
+                <div class="kvramis-header">
+                    <div class="company-logo">
+                        <span class="logo-kv">KV</span>
+                        <span class="logo-slash">/</span>
+                        <span class="logo-ramis">RaMIS</span>
+                        <div class="logo-subtitle">Project Group</div>
+                    </div>
+                    <div class="company-tagline">Технологии для цифровой трансформации агропросвещения</div>
+                </div>
+                
+                <div class="kvramis-content">
+                    <div class="contributions">
+                        <h3>Вклад в проект</h3>
+                        <div class="contribution-list">
+                            <div class="contribution">
+                                <div class="contribution-icon">💻</div>
+                                <div class="contribution-content">
+                                    <h4>Техническая разработка</h4>
+                                    <p>Создание цифровой платформы проекта</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contribution">
+                                <div class="contribution-icon">🎨</div>
+                                <div class="contribution-content">
+                                    <h4>UI/UX дизайн</h4>
+                                    <p>Разработка пользовательского интерфейса</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contribution">
+                                <div class="contribution-icon">🚀</div>
+                                <div class="contribution-content">
+                                    <h4>Технологическая поддержка</h4>
+                                    <p>Консультации по цифровой трансформации</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="kvramis-links">
+                        <h3>Свяжитесь с KV/RaMIS</h3>
+                        <div class="links-grid">
+                            <a href="https://t.me/kvramisinfo" target="_blank" class="link-card">
+                                <div class="link-icon">📢</div>
+                                <div class="link-content">
+                                    <div class="link-title">Telegram канал</div>
+                                    <div class="link-url">@kvramisinfo</div>
+                                </div>
+                                <div class="link-arrow">→</div>
+                            </a>
+                            
+                            <a href="https://1ardor1gaming1-maker.github.io/kv-ramis-site" target="_blank" class="link-card">
+                                <div class="link-icon">🌐</div>
+                                <div class="link-content">
+                                    <div class="link-title">Официальный сайт</div>
+                                    <div class="link-url">kv-ramis-site.github.io</div>
+                                </div>
+                                <div class="link-arrow">→</div>
+                            </a>
+                            
+                            <a href="https://github.com/1ardor1gaming1-maker" target="_blank" class="link-card">
+                                <div class="link-icon">👨‍💻</div>
+                                <div class="link-content">
+                                    <div class="link-title">GitHub программиста</div>
+                                    <div class="link-url">@1ardor1gaming1-maker</div>
+                                </div>
+                                <div class="link-arrow">→</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="kvramis-quote">
+                    <div class="quote-icon">❝</div>
+                    <blockquote>
+                        "Мы создаем технологии, которые меняют сознание и формируют будущее. Поддержка проекта 'Новое сельское хозяйство как социальная норма' — наш вклад в развитие общества, где технологии служат образованию и прогрессу."
+                    </blockquote>
+                    <div class="quote-author">— Команда KV/RaMIS Project Group</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- КОНТАКТЫ -->
+    <section id="contact" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Контакты и присоединение</h2>
+                <div class="section-divider"></div>
+            </div>
+            
+            <div class="contact-content">
+                <div class="contact-card">
+                    <div class="contact-avatar">ИП</div>
+                    <div class="contact-details">
+                        <h3>Подерин Иван Романович</h3>
+                        <p class="contact-title">Руководитель проекта</p>
+                        <p class="contact-university">Омский государственный аграрный университет</p>
+                        
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <span class="contact-icon">📞</span>
+                                <span>8 (950) 214-30-64</span>
+                            </div>
+                            <div class="contact-item">
+                                <span class="contact-icon">📧</span>
+                                <span>ir.poderin2203@omgau.org</span>
+                            </div>
+                            <div class="contact-item">
+                                <span class="contact-icon">🏫</span>
+                                <span>АТФ, группа Б-41-АСГ</span>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-actions">
+                            <a href="mailto:ir.poderin2203@omgau.org" class="btn btn-primary">Написать письмо</a>
+                            <a href="tel:+79502143064" class="btn btn-secondary">Позвонить</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="project-manifesto">
+                    <h3>Философия проекта</h3>
+                    <div class="manifesto-content">
+                        <p>«Мы не меняем образование — мы меняем сознание. Наша цель — общество, где агрограмотность так же естественна, как речь. Через интуитивное агропросвещение мы создаем новую социальную норму, преодолевая цивилизационный разрыв между человеком и АПК.»</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ФУТЕР -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <span class="logo-icon">🌱</span>
+                        <span class="logo-text">Демиурги общества и знания</span>
+                    </div>
+                    <p class="footer-description">
+                        Проект "Новое сельское хозяйство как социальная норма"<br>
+                        Омский ГАУ, 2024
+                    </p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Технологии проекта</h4>
+                    <div class="tech-stack">
+                        <span class="tech-tag">HTML5</span>
+                        <span class="tech-tag">CSS3</span>
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">SVG</span>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Партнеры</h4>
+                    <div class="partners">
+                        <div class="partner">
+                            <div class="partner-name">ОмГАУ</div>
+                            <div class="partner-role">Экспертная поддержка</div>
+                        </div>
+                        <div class="partner">
+                            <div class="partner-name">KV/RaMIS</div>
+                            <div class="partner-role">Техническая реализация</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="copyright">
+                    <p>© 2024 Проект "Новое сельское хозяйство как социальная норма"</p>
+                    <p>Разработано при поддержке <span class="highlight">KV/RaMIS Project Group</span></p>
+                </div>
+                <button class="back-to-top" id="backToTop">
+                    <span>↑</span>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- КРИТИЧНЫЙ JS ВНИЗУ -->
+    <script>
+        // КРИТИЧНЫЙ КОД: Должен выполниться сразу
+        (function() {
+            // Скрыть загрузчик и показать контент
+            setTimeout(() => {
+                const loader = document.getElementById('page-loader');
+                if (loader) {
+                    loader.style.transition = 'opacity 0.5s ease';
+                    loader.style.opacity = '0';
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                    }, 500);
+                }
+                
+                // Показать критические элементы
+                document.querySelectorAll('.critical-hidden').forEach(el => {
+                    el.classList.add('critical-visible');
+                });
+            }, 1000);
+            
+            // Плавная прокрутка
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href === '#' || href === '#!') return;
+                    
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        window.scrollTo({
+                            top: target.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Мобильное меню
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navMenu = document.querySelector('.nav-menu');
+            
+            if (menuToggle && navMenu) {
+                menuToggle.addEventListener('click', () => {
+                    menuToggle.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                });
+            }
+            
+            // Анимация при скролле
+            window.addEventListener('scroll', () => {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                    navbar.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+                } else {
+                    navbar.style.boxShadow = 'none';
+                }
+            });
+        })();
+    </script>
+    
+    <script src="script.js"></script>
+</body>
+</html>
