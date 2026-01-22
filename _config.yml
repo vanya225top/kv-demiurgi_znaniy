@@ -1,6 +1,42 @@
-# _config.yml
 title: "kv-demiurgi_znaniy"
-description: "the site was made by KV/RaMIS Project Group"
-theme: "minima" # используйте свой или стандартный
-url: "https://vanya225top.github.io/kv-demiurgi_znaniy/"  # Убедитесь, что URL правильный
-baseurl: ""  # Если сайт не находится в подкаталоге
+description: "The site was made by KV/RaMIS Project Group"
+theme: "minima" # Используйте минимальный стандартный стиль Jekyll, если не используете свой.
+url: "https://vanya225top.github.io/kv-demiurgi_znaniy/" # Укажите свой URL
+baseurl: "" # Если ваш сайт размещен в корне репозитория, оставьте пустым. В противном случае укажите подкаталог.
+
+# Указываем, что сайт не будет использовать локальные файлы Jekyll для обработки Markdown
+markdown: kramdown
+
+# Устанавливаем параметры для страниц
+paginate: 5 # Число элементов на странице (например, для списка постов)
+paginate_path: "/page:num" # Путь для пагинации
+
+# URL для изображений
+image: "/assets/img/logo.png" # Место для вашего логотипа или картинки
+
+# Структура вашего сайта и ссылки
+nav:
+  - text: "Главная"
+    url: "/"
+  - text: "Проектная деятельность"
+    url: "/project"
+  - text: "Контакты"
+    url: "/contacts"
+
+# Добавляем настройку для кастомных файлов
+plugins:
+  - jekyll-seo-tag
+  - jekyll-feed
+
+# Устанавливаем настройки для публикации проекта
+exclude:
+  - README.md
+  - LICENSE
+  - node_modules/
+
+# Настройки темы, если используете стандартную
+minima:
+  social_links:
+    twitter: "https://twitter.com/youraccount"
+    github: "https://github.com/yourgithubprofile"
+    linkedin: "https://linkedin.com/in/yourlinkedinprofile"
