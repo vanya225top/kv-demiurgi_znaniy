@@ -1,0 +1,6 @@
+# _config.yml
+title: "kv-demiurgi_znaniy"
+description: "the site was made by KV/RaMIS Project Group"
+theme: "minima" # используйте свой или стандартный
+url: "https://vanya225top.github.io/kv-demiurgi_znaniy/"  # Убедитесь, что URL правильный
+baseurl: ""  # Если сайт не находится в подкаталоге
